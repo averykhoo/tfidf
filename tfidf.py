@@ -49,28 +49,28 @@ class TFIDF(object):
 
         # count doc frequency
         df = Counter()  # document frequency not dataframe
-        for doc_name, word_freq in self.doc_word_freq.iteritems():
+        for doc_name, word_freq in self.doc_word_freq.items():
             df.update(word_freq.keys())
 
         if tfidf_type == u'smooth':
             # inverse document frequency smooth
-            total_docs = float(sum(df.itervalues()))
-            idf = {word: log(1 + total_docs / docs) for word, docs in df.iteritems()}
+            total_docs = float(sum(df.values()))
+            idf = {word: log(1 + total_docs / docs) for word, docs in df.items()}
 
             # log normalization for term frequency
             out = dict()
-            for doc_name, word_freq in self.doc_word_freq.iteritems():
-                for word, freq in word_freq.iteritems():
+            for doc_name, word_freq in self.doc_word_freq.items():
+                for word, freq in word_freq.items():
                     out.setdefault(doc_name, Counter())[word] = (1 + log(freq)) * idf[word]
 
         else:
             # no smoothing
-            idf = {word: 1.0 / docs for word, docs in df.iteritems()}
+            idf = {word: 1.0 / docs for word, docs in df.items()}
 
             # raw count for term frequency
             out = dict()
-            for doc_name, word_freq in self.doc_word_freq.iteritems():
-                for word, freq in word_freq.iteritems():
+            for doc_name, word_freq in self.doc_word_freq.items():
+                for word, freq in word_freq.items():
                     out.setdefault(doc_name, Counter())[word] = freq * idf[word]
 
         return out
@@ -84,26 +84,26 @@ class TFIDF(object):
         """
 
         df = Counter()  # document frequency not dataframe
-        for doc_name, word_freq in self.doc_word_freq.iteritems():
+        for doc_name, word_freq in self.doc_word_freq.items():
             df.update(word_freq.keys())
 
         if tfidf_type == u'prob':
             # probabilistic inverse document frequency
-            total_docs = sum(df.itervalues())
-            idf = {word: max(0.0, log((total_docs - docs) * 1.0 / docs)) for word, docs in df.iteritems()}
+            total_docs = sum(df.values())
+            idf = {word: max(0.0, log((total_docs - docs) * 1.0 / docs)) for word, docs in df.items()}
 
         elif tfidf_type == u'smooth':
             # inverse document frequency smooth
-            total_docs = float(sum(df.itervalues()))
-            idf = {word: log(1 + total_docs / docs) for word, docs in df.iteritems()}
+            total_docs = float(sum(df.values()))
+            idf = {word: log(1 + total_docs / docs) for word, docs in df.items()}
 
         else:
             # no smoothing
-            idf = {word: 1.0 / docs for word, docs in df.iteritems()}
+            idf = {word: 1.0 / docs for word, docs in df.items()}
 
         out = dict()
-        for doc_name, word_freq in self.doc_word_freq.iteritems():
-            for word, freq in word_freq.iteritems():
+        for doc_name, word_freq in self.doc_word_freq.items():
+            for word, freq in word_freq.items():
                 out.setdefault(doc_name, Counter())[word] = idf[word]
 
         return out
@@ -133,7 +133,7 @@ class TFIDF(object):
         # count document frequency and document lengths
         df = Counter()  # dataframe
         doc_len = Counter()
-        for doc_name, word_freq in self.doc_word_freq.iteritems():
+        for doc_name, word_freq in self.doc_word_freq.items():
             df.update(word_freq.keys())
             doc_len[doc_name] += sum(word_freq.values())
 
@@ -141,13 +141,13 @@ class TFIDF(object):
         avg_len = sum(doc_len.values()) * 1.0 / len(doc_len)
 
         # calculate inverse doc freq
-        total_docs = sum(df.itervalues())
-        idf = {word: log((total_docs - docs + 0.5) / (docs + 0.5)) for word, docs in df.iteritems()}
+        total_docs = sum(df.values())
+        idf = {word: log((total_docs - docs + 0.5) / (docs + 0.5)) for word, docs in df.items()}
 
         # calculate score
         out = dict()
-        for doc_name, word_freq in self.doc_word_freq.iteritems():
-            for word, freq in word_freq.iteritems():
+        for doc_name, word_freq in self.doc_word_freq.items():
+            for word, freq in word_freq.items():
                 out.setdefault(doc_name, Counter())[word] = \
                     idf[word] * ((freq * (k1 + 1)) * 1.0 / (freq + k1 * (1 - b + b * doc_len[doc_name] / avg_len)) + d)
 
