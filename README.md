@@ -6,9 +6,10 @@ basic tfidf counting
 # create object
 tfidf = TFIDF()
 
-# update with stuff
-for doc_id, doc_text in enumerate(doc_texts):
-    tfidf.update(doc_text.split(), doc_id)
+# update with stuff (read from files)
+for doc_path in doc_paths:
+    with io.open(doc_path, mode='r', encoding='utf8') as f:
+        tfidf.update(f.read().split(), doc_path)
     
 # get TF-IDF for top-10 terms
 for doc_id, word_bm25 in tfidf.generate_bm25().iteritems():
